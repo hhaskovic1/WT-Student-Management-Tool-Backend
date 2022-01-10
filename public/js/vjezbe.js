@@ -1,5 +1,5 @@
 
-
+//document.getElementById("okvir").innerHTML = "AAAAAAAA";
 //let okv = document.getElementById("okvir");
 window.onload = function() {
 

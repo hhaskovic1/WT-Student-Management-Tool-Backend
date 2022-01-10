@@ -11,29 +11,52 @@ app.get('/unosVjezbi.html', (req, res) => {
 
 app.listen(PORT);*/
 
-var city = document.getElementById('city');
 
-//var vrijednost = city.value;
 
-form.onsubmit = submit;
-function submit(event) {
-    form.setAttribute('hidden', '');
-   
-    
-    form.id = "form2";
-    modul.dodajInputPolja(document.getElementById("okvir"),city.value);
-    
-    // For this example, don't actually submit the form
-    event.preventDefault(); // ?
+/*const getName = () => {
+    return 'Jim';
+  };
+  
+exports.getName = getName;*/
 
-    but = document.getElementById("btn");
-    
-    
+//document.getElementById("okvir").innerHTML = "JOJJJ";
 
+window.onload=function(){
+
+  //  document.getElementById("okvir").innerHTML = "JOJJJ";
+
+  //  console.log("aaa");
+
+    const form = document.getElementById('form');
+    var city = document.getElementById('city');
+    
+    //var vrijednost = city.value;
+    
+    form.onsubmit = submit;
+    function submit(event) {
+        form.setAttribute('hidden', '');
+       
+        
+        form.id = "form2";
+        modul.dodajInputPolja(document.getElementById("okvir"),city.value);
+        
+        // For this example, don't actually submit the form
+        event.preventDefault(); // ?
+    
+        but = document.getElementById("btn");
+        
+        
+    
+    }
+  
+  
+  
 }
+ 
+
 
 let unos = (function() {
-
+   
 
     let f1 = function() {  
 
@@ -117,10 +140,14 @@ let fun = function() {
 
    // document.getElementById("btn").innerHTML = broj.length;
 }  
-  
+
 
 return {
     f1:f1,
     fun: fun
   }
 }());
+
+
+
+//export { f1, fun };

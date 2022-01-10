@@ -88,8 +88,8 @@ let modul = (function() {
       var obj = new Object();
       obj = vjezbeObjekat;
    
-      document.getElementById("btn").innerHTML = obj.brojVjezbi+" ";
-      document.getElementById("btn").innerHTML+=obj.brojZadataka;
+     // document.getElementById("btn").innerHTML = obj.brojVjezbi+" ";
+    //  document.getElementById("btn").innerHTML+=obj.brojZadataka;
    
       //document.getElementById("btn").addEventListener("click", listener1);
       // document.getElementById("posalji").addEventListener("click",function(){pokusajAjax(pokusaj.value,ispisi);})
@@ -222,10 +222,14 @@ let modul = (function() {
     document.addEventListener("click", function(event) {
       if (event.target.tagName.toLowerCase()=="div" && event.target.id.toLowerCase()!="okvir" && event.target.id[0]!="z") //can also be used as elem.target.tagName.toLowerCase()=="input"
       {
+
+
        // console.log("Using focusout : " + event.target.id);
      //  event.target.innerHTML=event.target.id;
 
        iscrtajZadatke(event.target,obj.brojZadataka[event.target.id-1])
+
+       //event.target.id="x"+event.target.id;
 
         event.preventDefault();
       }
@@ -238,8 +242,14 @@ let modul = (function() {
   
    var iscrtajZadatke = function(vjezbaDOMelement,brojZadataka) {
 
-    //  vjezbaDOMelement.innerHTML="aaaaaaann";
+
       
+
+
+    //  vjezbaDOMelement.innerHTML="aaaaaaann";
+      if(vjezbaDOMelement.id[0]!="x"){
+
+         vjezbaDOMelement.id="x"+vjezbaDOMelement.id;
 
       linebreak = document.createElement("br");
       vjezbaDOMelement.appendChild(linebreak); 
@@ -247,23 +257,96 @@ let modul = (function() {
       for(i=0;i<brojZadataka;i++){
          div1 = document.createElement("div");
          div1.id="z"+i+1;
-         div1.innerHTML="Zadatak"+(i+1);
+         div1.innerHTML="Zadatak"+(i+1)+"&nbsp&nbsp&nbsp";
          vjezbaDOMelement.appendChild(div1); 
       }
 
-      /*linebreak = document.createElement("br");
-      vjezbaDOMelement.appendChild(linebreak);
+      
 
-      for(i=0;i<brojZadataka;i++){
+      /*let djeca = document.getElementById("okvir").childNodes;
+      for(var i=0; i<djeca.length; i++) {
+         
+         if(djeca[i].id[0]=="x"){
+            let dj = djeca[i].childNodes;
+            if(!dj[0].hidden){
+               for(var j=0;j<dj.length;j++){
+                  dj[j].hidden=true;
+               }
+            }
+            
+         
+         }
 
       }
 
-      div1 = document.createElement("div");
-      div1.id=i+1;
-      div1.innerHTML="Zadatak"+(i+1);*/
+    //  if(!vjezbaDOMelement.getElementById("z1").hidden)
 
    }
+
+
+   /*if(vjezbaDOMelement.id[0]=="x") {
+      
+      if(!vjezbaDOMelement.getElementById("z1").hidden) {
+       
+         for(i=0;i<brojZadataka;i++){
+            vjezbaDOMelement.childNode[i].hidden=true;
+         }
+
+      }
+
+
+   }*/}
+
    
+      let djeca = document.getElementById("okvir").childNodes;
+ 
+    /* 1 3 5 itd
+     djeca[1].innerHTML="AA";*/
+
+    /*2 4 6
+    let dj = djeca[1].childNodes;
+    dj[2].innerHTML="BBB";*/
+    
+    /*  for(var i=0; i<djeca.length; i++) {
+         if(djeca[i].id[0]=="x")djeca[i].hidden=true;
+      
+   }*/
+
+   /*let dj = djeca[1].childNodes;
+   dj[2].setAttribute("hidden", true);*/
+   
+   for(var i=0; i<djeca.length; i++) {
+      if(djeca[i].id!=vjezbaDOMelement.id && i%2!=0){
+         dj = djeca[i].childNodes;
+         for(var j=0;j<dj.length;j++) {
+            //if(j>=2)dj[j].setAttribute("hidden", true);
+            if(j>=2)dj[j].style.display = "none";
+         }
+      }
+      
+   
+   }
+
+   //element.style.display = "none";
+
+   for(var i=0; i<djeca.length; i++) {
+     if(djeca[i].id==vjezbaDOMelement.id && i%2!=0){
+         dj = djeca[i].childNodes;
+         for(var j=0;j<dj.length;j++) {
+            if(j>=2){
+            //   dj[j].setAttribute("hidden", false);
+               //dj[j].innerHTML="BBB";
+               if(j>=2)dj[j].style.display = "contents";
+            }
+         }
+      }
+      
+   
+   }
+   
+   
+}
+
    var myFunction = function(error,data) {
      // document.getElementById("okvir").innerHTML = ajax.responseText;
      console.log(data.responseText);
@@ -320,7 +403,7 @@ let modul = (function() {
    
    objekat.brojZadataka=niz;
 
-   document.getElementById("okvir").innerHTML = objekat.brojZadataka;
+   //document.getElementById("okvir").innerHTML = objekat.brojZadataka;
 
       iscrtajVjezbe(document.getElementById("okvir"),objekat);
 
