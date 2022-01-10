@@ -114,7 +114,7 @@ let modul = (function() {
    
    
    
-      ajax.open("POST", "http://localhost:8085/vjezbe", true);
+      ajax.open("POST", "http://localhost:3000/vjezbe", true);
       ajax.setRequestHeader('Content-type', "application/json");
       ajax.send(
          JSON.stringify(
@@ -170,7 +170,7 @@ let modul = (function() {
       };
       
       
-      ajax.open("GET", "http://localhost:8085/vjezbe", true);
+      ajax.open("GET", "http://localhost:3000/vjezbe", true);
 
       ajax.send();
     /*  ajax.send(
