@@ -4,7 +4,7 @@ var myapi = {
     get: function(callback) {
       var xhr = new XMLHttpRequest();
     //  xhr.open('GET', 'vjezbe.csv', true); 
-      xhr.open("GET", "http://localhost:8085/vjezbe", true);
+      xhr.open("GET", "http://localhost:3000/vjezbe", true);
    
       xhr.onreadystatechange = function() {
         if(xhr.readyState == 4) {
@@ -22,7 +22,7 @@ var myapi = {
    
     post: function(data, callback) {
       var xhr = new XMLHttpRequest();
-      xhr.open('POST', 'http://jsonplaceholder.typicode.com/posts', true);
+      xhr.open('POST', "http://localhost:3000/vjezbe", true);
    
       xhr.onreadystatechange = function() {
         if(xhr.readyState == 4) {

@@ -159,8 +159,10 @@ let modul = (function() {
       ajax.onreadystatechange = function() {
          if (this.readyState == 4 && this.status == 200) {
           //  console.log(this.responseText);
+         //   callbackFja(null,this);
+         //   var jsonRez = JSON.parse(ajax.responseText);
             callbackFja(null,this);
-
+          //  console.log(data.responseText);
           //  iscrtajVjezbe(document.getElementById("okvir"),this.responseText);
          }
 
@@ -173,6 +175,8 @@ let modul = (function() {
       ajax.open("GET", "http://localhost:3000/vjezbe", true);
 
       ajax.send();
+
+
     /*  ajax.send(
          JSON.stringify(
             { 
@@ -242,7 +246,7 @@ let modul = (function() {
   
    var iscrtajZadatke = function(vjezbaDOMelement,brojZadataka) {
 
-
+     
       
 
 
@@ -350,6 +354,7 @@ let modul = (function() {
    var myFunction = function(error,data) {
      // document.getElementById("okvir").innerHTML = ajax.responseText;
      console.log(data.responseText);
+   //  data = data.responseText;
    }
 
    var myFunction2 = function(error,data) {
@@ -408,6 +413,8 @@ let modul = (function() {
       iscrtajVjezbe(document.getElementById("okvir"),objekat);
 
       console.log(data.responseText);
+
+      //return data.responseText;
     //  console.log(data.responseText);
     }
    
@@ -418,7 +425,8 @@ let modul = (function() {
       dohvatiPodatke: dohvatiPodatke,
       myFunction: myFunction,
       myFunction2: myFunction2,
-      iscrtajZadatke:iscrtajZadatke
+      iscrtajZadatke:iscrtajZadatke,
+      iscrtajVjezbe:iscrtajVjezbe
       
     }
   }());
