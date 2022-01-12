@@ -29,64 +29,7 @@ var obj = {
     brojZadataka : null
 };
 
-/*
-app.get('/', function(req, res){
-    
-    fs.readFile("vjezbe.csv", function(err, data){
-        
-        if (err){
-            res.send("Greska")
-        }
-        else {
 
-        
-            var obj = new Object()
-
-           // let brojVjezbi;
-       //{brojVjezbi:integer,brojZadataka:[z0,z1,...,zbrojVjezbi-1]}     
-            broj = []
-            let tekst = data.toString()
-            let redovi = tekst.split(',')
-            //brojZadataka.push({naziv: redovi[0]})
-            obj.brojVjezbi = tekst[0]
-           for(let i=1; i<redovi.length; i++){
-                //if(redovi[i]!="")brojZadataka.push({brojZadataka: redovi[i]})
-                if(redovi[i]!="")broj.push(redovi[i])
-            }
-            obj.brojZadataka = broj;
-            res.send(obj)
-        }
-    })
-})*/
-/*
-app.get('/', function(req, res){
-    
-    fs.readFile("vjezbe.csv", function(err, data){
-        
-        if (err){
-            res.send("Greska")
-        }
-        else {
-
-        
-            var obj = new Object()
-
-           // let brojVjezbi;
-       //{brojVjezbi:integer,brojZadataka:[z0,z1,...,zbrojVjezbi-1]}     
-            broj = []
-            let tekst = data.toString()
-            let redovi = tekst.split(',')
-            //brojZadataka.push({naziv: redovi[0]})
-            obj.brojVjezbi = redovi.length-1;
-           for(let i=1; i<redovi.length; i++){
-                //if(redovi[i]!="")brojZadataka.push({brojZadataka: redovi[i]})
-                if(redovi[i]!="")broj.push(redovi[i])
-            }
-            obj.brojZadataka = broj;
-            res.send(obj)
-        }
-    })
-})*/
 
 //dodati /vjezbe da je get i post
 app.get('/vjezbe/', function(req, res){
@@ -119,93 +62,131 @@ app.get('/vjezbe/', function(req, res){
                  if(redovi[i]!="")broj.push(redovi[i])
              }
              obj.brojZadataka = broj;
-             res.send(obj)
+
+             var greska = { 
+                status: null,
+                data : "Pogresan parametar "
+            };
+
+            if(obj.brojVjezbi<1||obj.brojVjezbi>15) {
+
+                greska.status = "error";
+                greska.data+="brojVjezbi";
+            }
+
+            for(var i=0; i<broj.length; i++) {
+
+                if(broj[i]<0 || broj[i]>10) {
+                    if(greska.status==null){
+                        greska.data+="z"+(i);
+                        greska.status = "error";
+                    }
+                    else {
+                        greska.data+=",z"+(i);
+                    }
+
+                }
+
+            }
+
+            if(obj.brojZadataka.length!=obj.brojVjezbi){
+                if(greska.status==null){
+                    greska.data+="brojZadataka";
+                    greska.status = "error";
+                }
+                else {
+                    greska.data+="brojZadataka";
+                }
+            }
+
+            
+            if(greska.status == "error")res.send(greska);
+            else res.send(obj)
          }
      })
  })
  
 
-app.get('/vjezbe', function(req, res){
+ app.get('/vjezbe', function(req, res){
 
-   // console.log('dddd');
-  
+    // console.log('dddd');
+   
+ 
+     fs.readFile("vjezbe.csv", function(err, data){
+         
+         if (err){
+             res.send("Greska")
+         }
+         else {
+ 
+             //req.body.data="sdsd";
+         
+             var obj = new Object()
+ 
+            // let brojVjezbi;
+        //{brojVjezbi:integer,brojZadataka:[z0,z1,...,zbrojVjezbi-1]}     
+             broj = []
+             let tekst = data.toString()
+             
+             let redovi = tekst.split(',')
+             obj.brojVjezbi = redovi.length-1;
+             //brojZadataka.push({naziv: redovi[0]})
+             //obj.brojVjezbi = tekst[0]
+            for(let i=1; i<redovi.length; i++){
+                 //if(redovi[i]!="")brojZadataka.push({brojZadataka: redovi[i]})
+                 if(redovi[i]!="")broj.push(redovi[i])
+             }
+             obj.brojZadataka = broj;
 
-    fs.readFile("vjezbe.csv", function(err, data){
-        
-        if (err){
-            res.send("Greska")
-        }
-        else {
+             var greska = { 
+                status: null,
+                data : "Pogresan parametar "
+            };
 
-            //req.body.data="sdsd";
-        
-            var obj = new Object()
+            if(obj.brojVjezbi<1||obj.brojVjezbi>15) {
 
-           // let brojVjezbi;
-       //{brojVjezbi:integer,brojZadataka:[z0,z1,...,zbrojVjezbi-1]}     
-            broj = []
-            let tekst = data.toString()
-            
-            let redovi = tekst.split(',')
-            obj.brojVjezbi = redovi.length-1;
-            //brojZadataka.push({naziv: redovi[0]})
-            //obj.brojVjezbi = tekst[0]
-           for(let i=1; i<redovi.length; i++){
-                //if(redovi[i]!="")brojZadataka.push({brojZadataka: redovi[i]})
-                if(redovi[i]!="")broj.push(redovi[i])
+                greska.status = "error";
+                greska.data+="brojVjezbi";
             }
-            obj.brojZadataka = broj;
-            res.send(obj)
-        }
-    })
-})
+
+            for(var i=0; i<broj.length; i++) {
+
+                if(broj[i]<0 || broj[i]>10) {
+                    if(greska.status==null){
+                        greska.data+="z"+(i);
+                        greska.status = "error";
+                    }
+                    else {
+                        greska.data+=",z"+(i);
+                    }
+
+                }
+
+            }
+
+            if(obj.brojZadataka.length!=obj.brojVjezbi){
+                if(greska.status==null){
+                    greska.data+="brojZadataka";
+                    greska.status = "error";
+                }
+                else {
+                    greska.data+="brojZadataka";
+                }
+            }
+
+            
+            if(greska.status == "error")res.send(greska);
+            else res.send(obj)
+         }
+     })
+ })
 
 
 app.get('/unosVjezbi.html', (req, res) => {
 
     res.sendFile(__dirname + '/public/html/unosVjezbi.html');
     
-   /* const user = require('./unosVjezbi');
-    console.log(`User: ${user.getName()}`);*/
- 
-
-    /*const { getName, dob } = require('./unosVjezbi');
-    console.log(
-      `${getName()} was born on ${dob}.`
-    );*/
-    
-    /*const { getName} = require('./unosVjezbi');
-    console.log(
-      `${getName()}`
-    );*/
-
-   
-
-//res.sendFile(__dirname + '/unosVjezbi.html');
-
-   /* const {getName} = require('./unosVjezbi');
-    getName();*/
-    
-
-
-    /*if(req.url=='/unosVjezbi' || req.url=='/unosVjezbi?ime='){
-      
-        res.sendFile(__dirname + '/unosVjezbi.html');
-        console.log(req.url);
-    }
-        
-        
-    else { 
-        var br="";
-        br+=req.originalUrl[16];
-        if(req.originalUrl.length==18)br+=req.originalUrl[17];
-
-    
-
-      console.log(br);
-      
-      res.send(req.originalUrl)
-    }*/
+  
   
 });
 
@@ -215,54 +196,11 @@ app.get('/vjezbe.html', (req, res) => {
 
 });
 
-/*
-app.get('/unosVjezbi', function(req, res){
-    fs.readFile("vjezbe.csv", function(err, content){
-        if(err) throw err;
-        res.type('html');       
- 
-        res.writeHeader(200, {});
-      
-                   
-        res.write("<table><tr>" + "<td>Ime</td>" +
-                   "<td>Prezime</td>" + "<td>Adresa</td>" +
-                   "<td>Broj telefona</td></tr>");
-        
-        var bla = content.toString();
-        var redovi = bla.split("\n");
- 
-        for(var i = 0; i < redovi.length; i++){
-            var kolone = redovi[i].split(",");
- 
-            res.write("<form action='http://localhost:8085/" + kolone[0] + "'method='GET'><tr><td>" + kolone[0] +  "</td>" +
-                      "<td>" + kolone[1] +  "</td>" +
-                      "<td>" + kolone[2] +  "</td>" +
-                      "<td>" + kolone[3] +  "</td>" +
-                      "<td>" + "<input type=\"submit\" value=\"Delete\">"  + "</td>" +
-                      "<td>" + "<input type=\"submit\" value=\"Edit\" formaction='http://localhost:8085/edit/" +
-                      kolone[0] + "/" + kolone[0] + "/" + kolone[0] + "/" + kolone[0] + "'></td></tr></form>");
-        }
-        res.write("</table>");
- 
-        res.end();
-    });
-});*/
-/*
-app.post('/',function(req,res){
 
-    res.send({
-        message: "Uspješno dodana aktivnost POST/!"
-    })
-
-});*/
 
 app.post('/vjezbe',function(req,res){
 
-    /*res.send({
-        message: req.body
-    })*/
-  //  console.log('aaaa');
-
+    
     
     fs.readFile("vjezbe.csv", function(err, data){
 

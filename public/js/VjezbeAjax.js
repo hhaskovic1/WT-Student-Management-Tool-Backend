@@ -101,7 +101,8 @@ let modul = (function() {
             callbackFja(null,this);
          }
          if (ajax.readyState == 4 && ajax.status == 404)
-              console.log('Greska ima');
+           //   console.log('Greska ima');
+              callbackFja("Greska ima",null);
       };
 
       /*ajax.onreadystatechange = () => {
@@ -168,7 +169,8 @@ let modul = (function() {
 
          
          if (ajax.readyState == 4 && ajax.status == 404)
-              console.log('Greska ima');
+          //    console.log('Greska ima');
+          callbackFja("Greska ima",null);
       };
       
       

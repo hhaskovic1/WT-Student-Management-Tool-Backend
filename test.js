@@ -177,14 +177,7 @@ describe('VjezbeAjax', function() {
   });
 
 
-  describe('dohvatiPodatke()', function() {
-
-    it('TEST', function() {
-      
-    });
-
-
-  });
+  
 
   describe('iscrtajVjezbe()', function() {
 
@@ -234,52 +227,10 @@ describe('VjezbeAjax', function() {
     });
 
 
-    it('TEST', function() {
-      
-    });
 
 
   });
 
-
-  describe('iscrtajZadatke()', function() {
-
-    it('TEST', function(done) {
-
-
-      var data = {brojVjezbi: 5};
-      var dataJson = JSON.stringify(data);
-    
-      let okvir = document.createElement("DIV");
-      okvir.setAttribute("id", "okvir");
-      modul.dodajInputPolja(okvir,data.brojVjezbi);
-
-      
-      var brojac=0;
-     
-      for(var i=0; i<okvir.children.length;i++) {
-        if(okvir.children[i].tagName.toLowerCase("input") && okvir.children[i].id[1]==i/3-1){ 
-          brojac++;
-        }
-       
-      }
-      assert.equal(brojac, 5,"Broj input polja treba biti 5");
-  
-     
-
-
-      myapi.get(function(err, result) {
-           /*console.log(result);
-           result.should.deep.equal(data);*/
-           done();
-         });
-        
-         this.requests[0].respond(200, { 'Content-Type': 'text/json' }, dataJson);
-
-      
-    });
-
-  });
 
 });
 
