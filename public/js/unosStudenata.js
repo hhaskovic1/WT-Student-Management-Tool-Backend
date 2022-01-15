@@ -29,13 +29,11 @@ window.onload=function(){
         //  button.addEventListener("click",function(){novi.dodajStudenta(student,novi.myFunction);})
          // novi.dodajStudenta(student,novi.myFunction);
 
-         button.onclick = function() {  
-            novi.dodajStudenta(student,function(error,data){
-                document.getElementById("ajaxstatus").innerHTML=data.responseText;
-             //   alert(data.responseText)
-           //   return data;
-            }); 
-         };  
+         button.onclick = novi.dodajStudenta(student,function(error,data){
+            document.getElementById("ajaxstatus").innerHTML=data.responseText;
+         //   alert(data.responseText)
+       //   return data;
+        }); 
 
      
      
