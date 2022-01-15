@@ -4,13 +4,19 @@ const fs = require('fs');
 const app = express();
 const cors = require('cors');
 const e = require('express');
-const path = require("path")
+const path = require("path");
+
+
+const db = require('./db.js');
+//db.sequelize.sync();
+db.sequelize.sync({force:true});
 
 //var exp = module.exports = express();
 
 app.use(cors())
 
 app.use(express.static("public"));
+app.use(express.static("models"));
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -22,6 +28,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 //app.use("/styles",  express.static(__dirname + '/public/stylesheets'));
 app.use('/', express.static(path.join(__dirname,'public/js')));
 app.use('/', express.static(path.join(__dirname,'public/html')));
+
+app.use('/', express.static(path.join(__dirname,'models')));
+
 
 
 var obj = { 
@@ -181,6 +190,8 @@ app.get('/vjezbe/', function(req, res){
      })
  })
 
+ 
+
 
 app.get('/unosVjezbi.html', (req, res) => {
 
@@ -236,6 +247,107 @@ app.post('/vjezbe',function(req,res){
 
 
 
+app.get('/student', function(req,res){
+    db.student.findAll().then(function(p){
+        
+
+        res.json(p)
+    }).catch(function(err){
+        res.send("Greska")
+    })
+})
+
+app.get('/grupa', function(req,res){
+    db.grupa.findAll().then(function(p){
+        
+
+        res.json(p)
+    }).catch(function(err){
+        res.send("Greska")
+    })
+})
+
+
+//{status:”Kreiran student!”}
+                    //                  node index.js
+
+//{ime:string,prezime:string,index:string,grupa:string}
+app.post('/student', function(req, res){
+    console.log(req.body);
+
+
+    db.student.findOne({where: {indeks: req.body.indeks}}).then(function(p){//console.log(p)
+        if(p!=null){
+            //res.send("Ima");
+            res.send({status:"Student sa indexom {"+req.body.indeks+"} već postoji!"})
+        }
+        else {
+            db.student.create({
+                ime: req.body.ime, 
+                prezime: req.body.prezime, 
+                indeks: req.body.indeks,
+                grupa: req.body.grupa
+            }).then(function(p){
+        
+               /* JSON.stringify(
+                    { 
+                        status: "Kreiran student!"
+                    }
+                 )*/
+        
+               // res.send(p)
+               res.send({status:"Kreiran student!"})
+             
+           //  res.send({status: "Kreiran student!"});
+        
+            }).catch(function(err){
+                console.log(err)
+                res.send("Greska")
+            })
+        }
+    }).catch(function(err){
+        console.log(err)
+        res.send("Greska");
+    })
+
+    
+})
+
+app.get('/unosStudenata.html', (req, res) => {
+
+    res.sendFile(__dirname + '/public/html/unosStudenata.html');
+    
+  
+  
+});
+
+/*
+
+app.post('/v2/aktivnost', function(req, res){
+    console.log(req.body)
+    db.aktivnost.create({
+        naziv: req.body.naziv,
+        pocetak: req.body.pocetak,
+        kraj: req.body.kraj,
+        grupa: req.body.grupa,
+        dan: req.body.dan,
+        tip: req.body.tip,
+        predmet: req.body.predmet
+    }).then(function(p){
+        res.send(p)
+    }).catch(function(err){
+        console.log(err)
+        res.send("Greska")
+    })
+})
+
+
+
+                    node index.js
+
+
+
+*/
 
 
 
