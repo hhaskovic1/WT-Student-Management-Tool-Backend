@@ -49,9 +49,9 @@ var obj = {
 
 
 //dodati /vjezbe da je get i post
-app.get('/vjezbe/', function(req, res){
+/*app.get('/vjezbe/', function(req, res){
 
-    // console.log('dddd');
+ 
    
  
      fs.readFile("vjezbe.csv", function(err, data){
@@ -61,21 +61,17 @@ app.get('/vjezbe/', function(req, res){
          }
          else {
  
-             //req.body.data="sdsd";
          
              var obj = new Object()
  
-            // let brojVjezbi;
-        //{brojVjezbi:integer,brojZadataka:[z0,z1,...,zbrojVjezbi-1]}     
              broj = []
              let tekst = data.toString()
              
              let redovi = tekst.split(',')
              obj.brojVjezbi = redovi.length-1;
-             //brojZadataka.push({naziv: redovi[0]})
-             //obj.brojVjezbi = tekst[0]
+          
             for(let i=1; i<redovi.length; i++){
-                 //if(redovi[i]!="")brojZadataka.push({brojZadataka: redovi[i]})
+              
                  if(redovi[i]!="")broj.push(redovi[i])
              }
              obj.brojZadataka = broj;
@@ -123,34 +119,150 @@ app.get('/vjezbe/', function(req, res){
      })
  })
  
-
+*/
  app.get('/vjezbe', function(req, res){
+    function dynamicSort(property) {
+        var sortOrder = 1;
+        if(property[0] === "-") {
+            sortOrder = -1;
+            property = property.substr(1);
+        }
+        return function (a,b) {
+            /* next line works with strings and numbers, 
+             * and you may want to customize it to your needs
+             */
+            var result = (a[property] < b[property]) ? -1 : (a[property] > b[property]) ? 1 : 0;
+            return result * sortOrder;
+        }
+    }
 
-    // console.log('dddd');
+    var el = { 
+        in : 0, 
+        vr : 0
+    };
+    
+    var niz = [];
+     
+
+    var obj = { 
+        brojVjezbi : 0, 
+        brojZadataka : null
+    };
+    
+
+     obj = new Object()
+
+    let brojac = 0;
+    var broj = [];
+    var s="";
+
+
+    let brojac2 = 0;
+    
+    // console.log(db.vjezba.countZadaci());
+    db.vjezba.findAll().then(function(resSet){
+        //  console.log("Lista: ");
+     resSet.forEach(knjiga => {
+         brojac++;
+         
+      
+    
+    })
+
+})
+
+
+
+    db.vjezba.findAll().then(function(resSet){
+        //  console.log("Lista: ");
+     
+       
+  
+    resSet.forEach(knjiga => {
+        brojac2++;
+        knjiga.countZadaci().then(function(d){
+           // console.log(d);
+           
+              
+            //   console.log(knjiga.id+" "+d);
+            el = new Object();
+            el.in=knjiga.id;
+            el.vr=d;
+
+            niz.push(el);
+       //     console.log(broj[0]);
+      // console.log(d.value);
+   //   console.log(broj);
+   //console.log(niz);
    
+   if(brojac2==brojac && niz.length==brojac){
+    
+    niz= niz.sort(dynamicSort("in"));
+
+    for(var l=0; l<niz.length; l++) {
+        broj.push(niz[l].vr)
+    }
+
+    
+    obj.brojVjezbi=brojac;
+    obj.brojZadataka=broj;
+    console.log(obj);
+    res.send(obj)
+
+   }
+           }); 
+        
+          // console.log(broj[0]);
+        /*db.zadatak.findAll().then(function(r){
+            brojac=0;
+       r.forEach(k => {
+           if(knjiga.hasZadaci(k)){
+               brojac++;
+       
+           }
+
+
+          
+      }) 
+  
+    });*/
+     
+   
+   })
+   // console.log(s);
+    //console.log(broj[0]);
+   //console.log(brojac);
+    //obj.brojVjezbi=brojac;
+   // obj.brojZadataka=broj;
  
-     fs.readFile("vjezbe.csv", function(err, data){
+ });
+ 
+ 
+               
+    
+
+
+   // res.send(obj)
+ 
+    /* fs.readFile("vjezbe.csv", function(err, data){
          
          if (err){
              res.send("Greska")
          }
          else {
  
-             //req.body.data="sdsd";
-         
              var obj = new Object()
  
-            // let brojVjezbi;
-        //{brojVjezbi:integer,brojZadataka:[z0,z1,...,zbrojVjezbi-1]}     
+               
              broj = []
              let tekst = data.toString()
              
              let redovi = tekst.split(',')
              obj.brojVjezbi = redovi.length-1;
-             //brojZadataka.push({naziv: redovi[0]})
-             //obj.brojVjezbi = tekst[0]
+             
+            
             for(let i=1; i<redovi.length; i++){
-                 //if(redovi[i]!="")brojZadataka.push({brojZadataka: redovi[i]})
+             
                  if(redovi[i]!="")broj.push(redovi[i])
              }
              obj.brojZadataka = broj;
@@ -195,7 +307,11 @@ app.get('/vjezbe/', function(req, res){
             if(greska.status == "error")res.send(greska);
             else res.send(obj)
          }
-     })
+     })*/
+
+
+
+
  })
 
  
@@ -219,9 +335,189 @@ app.get('/vjezbe.html', (req, res) => {
 
 app.post('/vjezbe',function(req,res){
 
+    /*for(i=0; i<req.body.brojZadataka.length;i++){
+        tekst+=req.body.brojZadataka[i];
+        if(i!=req.body.brojZadataka.length-1)tekst+=",";
+    }*/
+
+    /*db.zadatak.drop();
+    db.vjezba.drop();*/
     
+
+    //db.zadatak.destroy({ truncate : true, cascade: true }) .then(() => {
+
+    /*
+    db.student.findOne({where:{index: req.params.index}}).then(function(andric){
+            andric.getGrupe().then(function(resSet){
+              //  console.log("Lista: ");
+                resSet.forEach(knjiga => {
+                    //console.log("\t"+knjiga.naziv);
+                    if(knjiga.naziv!=req.body.grupa){
+                        knjiga.removeStudenti([stud]);
+                    }
+                });
+            });
+        });
+         */
+     let brojac = 0;
     
-    fs.readFile("vjezbe.csv", function(err, data){
+   // console.log(db.vjezba.countZadaci());
+
+   db.vjezba.findAll().then(function(resSet){
+       //  console.log("Lista: ");
+    resSet.forEach(knjiga => {
+        brojac++;
+        knjiga.countZadaci().then(function(d){
+           // console.log(d+" "+knjiga.id);
+           }); 
+        
+    
+        /*db.zadatak.findAll().then(function(r){
+            brojac=0;
+       r.forEach(k => {
+           if(knjiga.hasZadaci(k)){
+               brojac++;
+       
+           }
+
+
+          
+      }) 
+  
+    });*/
+     
+   
+   })
+   
+  // console.log(brojac);
+
+});
+
+
+   //db.zadatak.drop()
+
+   /*db.vjezba.removeConstraint(  
+    "vjezbas",
+    "vjezbaId",
+    { logging: console.log },
+  )*/
+   
+  // queryInterface.removeConstraint(db.vjezba,"zadatakId");
+
+ /*
+
+  db.sequelize.queryInterface.removeConstraint(  
+    "zadataks",
+    "PRIMARY",
+    { logging: console.log },
+  ).then(() => {
+    return new Promise(function(resolve,reject){resolve(this);});
+}).catch(function(err){
+    //res.send(err)
+})
+
+   db.sequelize.queryInterface.removeConstraint(  
+    "zadatak_vjezba",
+    "PRIMARY",
+    { logging: console.log },
+  ).then(() => {
+    return new Promise(function(resolve,reject){resolve(this);});
+}).catch(function(err){
+   // res.send(err)
+})
+
+
+db.sequelize.queryInterface.removeConstraint(  
+    "zadatak_vjezba",
+    "PRIMARY",
+    { logging: console.log },
+  ).then(() => {
+    return new Promise(function(resolve,reject){resolve(this);});
+}).catch(function(err){
+   // res.send(err)
+})*/
+
+/*
+db.sequelize.queryInterface.removeConstraint(  
+    "vjezbas",
+    "PRIMARY",
+    { logging: console.log },
+  ).then(() => {
+    return new Promise(function(resolve,reject){resolve(this);});
+}).catch(function(err){
+   // res.send(err)
+})
+
+db.vjezba.drop().then(() => {
+    
+}, (err) => {
+  console.log('truncate: ', err);
+ 
+});
+*/
+
+/*
+db.sequelize.queryInterface.removeConstraint(  
+    "vjezbas",
+    "SECONDARY",
+    { logging: console.log },
+  ).then(() => {
+    return new Promise(function(resolve,reject){resolve(this);});
+}).catch(function(err){
+    res.send(err)
+})*/
+   /*db.vjezba.drop().then(() => {
+    
+    }, (err) => {
+      console.log('truncate: ', err);
+     
+    });*/
+
+  /*  db.zadatak.destroy({ truncate: { cascade: true } })
+    .then(() => {
+    //  res.json({ status: true });
+    }, (err) => {
+      console.log('truncate: ', err);
+      //res.json(err);
+    });*/
+
+
+      /*db.vjezba.destroy({ truncate: { cascade: true } })
+    .then(() => {
+    //  res.json({ status: true });
+    }, (err) => {
+      console.log('truncate: ', err);
+      //res.json(err);
+    });*/
+
+    for(let i=0; i<req.body.brojVjezbi;i++){
+        
+
+        db.vjezba.create({brojZadataka:req.body.brojZadataka[i]}).then(function(k){
+         //   console.log(req.body.brojZadataka[i]);
+            for(let j=0; j<req.body.brojZadataka[i];j++){
+
+              //  console.log(k);
+
+
+                db.zadatak.create().then(function(p){
+
+                    k.addZadaci([p]);
+                })
+
+               
+            }
+           // return new Promise(function(resolve,reject){resolve(k);});
+        })
+    
+
+    }
+    
+  //  res.send(req.body)
+    
+
+    
+    /*fs.readFile("vjezbe.csv", function(err, data){
 
         if (err){
             res.send("Greska")
@@ -245,7 +541,7 @@ app.post('/vjezbe',function(req,res){
         
 
         
-    })
+    })*/
 
    /* res.send({
         message: "Uspješno dodana aktivnost POST/vjezbe!"
@@ -453,7 +749,17 @@ app.put('/student/:index', function(req, res){
                
                 var stud=p.filter(function(a){return a.index===req.params.index})[0];
 
-                
+                db.student.findOne({where:{index: req.params.index}}).then(function(andric){
+                    andric.getGrupe().then(function(resSet){
+                      //  console.log("Lista: ");
+                        resSet.forEach(knjiga => {
+                            //console.log("\t"+knjiga.naziv);
+                            if(knjiga.naziv!=req.body.grupa){
+                                knjiga.removeStudenti([stud]);
+                            }
+                        });
+                    });
+                });
 
              //   grp = stud.getGrupe();
                 
@@ -466,7 +772,7 @@ app.put('/student/:index', function(req, res){
                // res.send(p)
               // res.send({status:"Kreiran student!"})
               
-
+              
 
                grupeListaPromisea.push(
 
@@ -483,7 +789,8 @@ app.put('/student/:index', function(req, res){
                     else {
                       //  grp = stud.getGrupe();
                     //    console.log(grp)
-                    console.log("aa")
+                  //  console.log("aa")
+                 
                         db.grupa.create({naziv:req.body.grupa}).then(function(k){
                             k.setStudenti([stud]);
                      //  k.removeStudenti();
@@ -493,6 +800,11 @@ app.put('/student/:index', function(req, res){
                     }
                 })
             );
+
+
+            
+
+            
                
 
 

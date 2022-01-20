@@ -222,16 +222,16 @@ let modul = (function() {
       divDOMelement.appendChild(linebreak);
    }
 
-   
+  // alert(obj.brojVjezbi);
     /*for(i=0;i<obj.brojVjezbi;i++)funkc(i+1,obj.brojZadataka[i]); 
     i=0;*/
     document.addEventListener("click", function(event) {
       if (event.target.tagName.toLowerCase()=="div" && event.target.id.toLowerCase()!="okvir" && event.target.id[0]!="z") //can also be used as elem.target.tagName.toLowerCase()=="input"
       {
 
-
+        
        // console.log("Using focusout : " + event.target.id);
-     //  event.target.innerHTML=event.target.id;
+      // event.target.innerHTML="aaaa"
 
        iscrtajZadatke(event.target,obj.brojZadataka[event.target.id-1])
 
@@ -250,7 +250,7 @@ let modul = (function() {
 
      
       
-
+    //  alert(brojZadataka);
 
     //  vjezbaDOMelement.innerHTML="aaaaaaann";
       if(vjezbaDOMelement.id[0]!="x"){
@@ -303,8 +303,12 @@ let modul = (function() {
 
    }*/}
 
+  // document.getElementById("okvir").innerHTML="AAA"
    
       let djeca = document.getElementById("okvir").childNodes;
+
+
+       // alert(djeca.length);
  
     /* 1 3 5 itd
      djeca[1].innerHTML="AA";*/
@@ -333,7 +337,7 @@ let modul = (function() {
    
    }
 
-   //element.style.display = "none";
+   
 
    for(var i=0; i<djeca.length; i++) {
      if(djeca[i].id==vjezbaDOMelement.id && i%2!=0){
@@ -365,6 +369,8 @@ let modul = (function() {
 //{"brojVjezbi":13,"brojZadataka":["4","4","6","4","7","7","4","4","4","8","9","10","4"]}
       let obj =data.responseText;
 
+      // alert(obj);
+
       var objekat = { 
          brojVjezbi : 0, 
          brojZadataka : null
@@ -380,44 +386,42 @@ let modul = (function() {
       objekat.brojVjezbi=s;
 
       var x;
-      for(i=15;i<obj.length;i++){
-         if(obj[i]=="[")x=i+2;
+      for(i=18;i<obj.length;i++){
+         if(obj[i]=="[")x=i+1;
       }
 
       niz = [];
    
       niz.push(obj[x]);
+
+      
       
       var broj =""; 
 
       for(i=x+1;i<obj.length;i++){
 
+
          if(obj[i]>=0 && obj[i]<=10) {
             if(obj[i]!=",")broj+=obj[i];
-            //niz.push(obj[i]);
+          
          }
-         else if(obj[i]=="\""){
+         else if(obj[i]=="," || obj[i]=="]"){
             if(broj!="," && broj!="")niz.push(broj);
             broj="";
          }
       }
 
-   //   divDOMelement.innerHTML = niz;
- /*  niz2 = [];
-   for(i=0; i<niz.length; i++) {
-      if(niz[i]!="")niz2.push(niz[i]);
-   }*/
-   
+     // alert(niz);
+
+   objekat.brojVjezbi=niz.length;
    objekat.brojZadataka=niz;
 
-   //document.getElementById("okvir").innerHTML = objekat.brojZadataka;
+   
 
       iscrtajVjezbe(document.getElementById("okvir"),objekat);
 
-      console.log(data.responseText);
+//      alert(obj);
 
-      //return data.responseText;
-    //  console.log(data.responseText);
     }
    
 
