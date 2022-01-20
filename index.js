@@ -8,10 +8,18 @@ const path = require("path");
 
 
 const db = require('./db.js');
-//db.sequelize.sync();
-db.sequelize.sync({force:true});
+const { student, grupa } = require('./db.js');
 
-//var exp = module.exports = express();
+db.sequelize.sync({force:true});
+/*db.sequelize.sync({force:true}).then(function(){
+    inicializacija().then(function(){
+        console.log("Gotovo kreiranje tabela i ubacivanje pocetnih podataka!");
+        process.exit();
+    });
+});*/
+
+var studentiListaPromisea=[];
+var grupeListaPromisea=[];
 
 app.use(cors())
 
@@ -250,8 +258,9 @@ app.post('/vjezbe',function(req,res){
 app.get('/student', function(req,res){
     db.student.findAll().then(function(p){
         
-
         res.json(p)
+
+     //   res.json(p)
     }).catch(function(err){
         res.send("Greska")
     })
@@ -267,6 +276,17 @@ app.get('/grupa', function(req,res){
     })
 })
 
+app.get('/grupa', function(req,res){
+    db.student_grupa.findAll().then(function(p){
+        
+
+        res.json(p)
+    }).catch(function(err){
+        res.send("Greska")
+    })
+})
+
+
 
 //{status:”Kreiran student!”}
                     //                  node index.js
@@ -276,17 +296,90 @@ app.post('/student', function(req, res){
     console.log(req.body);
 
 
-    db.student.findOne({where: {indeks: req.body.indeks}}).then(function(p){//console.log(p)
+    db.student.findOne({where: {index: req.body.index}}).then(function(p){//console.log(p)
         if(p!=null){
             //res.send("Ima");
-            res.send({status:"Student sa indexom {"+req.body.indeks+"} već postoji!"})
+            res.send({status:"Student sa indexom {"+req.body.index+"} već postoji!"})
         }
         else {
-            db.student.create({
+            studentiListaPromisea.push( db.student.create({
                 ime: req.body.ime, 
                 prezime: req.body.prezime, 
-                indeks: req.body.indeks,
+                index: req.body.index,
                 grupa: req.body.grupa
+            }));
+            Promise.all(studentiListaPromisea).then(function(p){
+                
+                var stud=p.filter(function(a){return a.index===req.body.index})[0];
+               /* JSON.stringify(
+                    { 
+                        status: "Kreiran student!"
+                    }
+                 )*/
+        
+               // res.send(p)
+               res.send({status:"Kreiran student!"})
+
+
+               grupeListaPromisea.push(
+
+                db.grupa.findOne({where: {naziv: req.body.grupa}}).then(function(p){
+                 //   alert(req.body.grupa)
+                    if(p!=null){
+                        //res.send("Ima");
+                        return new Promise(function(resolve,reject){resolve(p);});
+                        //res.send({status:"Grupa sa nazivom {"+req.body.grupa+"} već postoji!"})
+                    }
+                    else {
+                        db.grupa.create({naziv:req.body.grupa}).then(function(k){
+                            k.setStudenti([stud]);
+                            return new Promise(function(resolve,reject){resolve(k);});
+                        })
+                    }
+                })
+            );
+
+            
+           
+         /*   grp = stud.getGrupe();
+            console.log(grp)*/
+
+
+              /* grupeListaPromisea.push(
+
+                db.grupa.create({naziv:req.body.grupa}).then(function(k){
+                    k.setStudenti([stud]);
+                    return new Promise(function(resolve,reject){resolve(k);});
+                })
+            );*/
+         //   Promise.all(grupeListaPromisea);  - da li je potrebno?
+           //  res.send({status: "Kreiran student!"});
+        
+            }).catch(function(err){
+                console.log(err)
+                res.send("Greska")
+            })
+        }
+    }).catch(function(err){
+        console.log(err)
+        res.send("Greska");
+    })
+
+    
+})
+
+app.post('/grupa', function(req, res){
+    console.log(req.body);
+
+
+    db.grupa.findOne({where: {naziv: req.body.naziv}}).then(function(p){//console.log(p)
+        if(p!=null){
+            //res.send("Ima");
+            res.send({status:"Grupa sa nazivom {"+req.body.naziv+"} već postoji!"})
+        }
+        else {
+            db.grupa.create({
+                naziv: req.body.naziv
             }).then(function(p){
         
                /* JSON.stringify(
@@ -296,7 +389,7 @@ app.post('/student', function(req, res){
                  )*/
         
                // res.send(p)
-               res.send({status:"Kreiran student!"})
+               res.send({status:"Kreirana grupa!"})
              
            //  res.send({status: "Kreiran student!"});
         
@@ -321,34 +414,290 @@ app.get('/unosStudenata.html', (req, res) => {
   
 });
 
-/*
 
-app.post('/v2/aktivnost', function(req, res){
-    console.log(req.body)
-    db.aktivnost.create({
-        naziv: req.body.naziv,
-        pocetak: req.body.pocetak,
-        kraj: req.body.kraj,
-        grupa: req.body.grupa,
-        dan: req.body.dan,
-        tip: req.body.tip,
-        predmet: req.body.predmet
-    }).then(function(p){
-        res.send(p)
+
+
+
+app.put('/student/:index', function(req, res){
+    
+  //  console.log(req.params.index)
+    
+    /*db.student.update({
+        grupa: req.body.grupa
+    }, {where: {index: req.params.index}}).then(function(p){
+        //console.log(req.body.grupa)
+        console.log(req.body.grupa); 
+           res.send({status:"Promjenjena grupa studentu {"+req.body.index+"}"});
+    }).catch(function(err){
+        res.send("Greska")
+    })*/
+
+    //let grp;
+    
+    db.student.findOne({where: {index: req.params.index}}).then(function(p){//console.log(p)
+        if(p==null){
+            //res.send("Ima");
+            res.send({status:"Student sa indexom {"+req.params.index+"} ne postoji!"})
+        }
+        else {
+            /*studentiListaPromisea.push( db.student.create({
+                ime: req.body.ime, 
+                prezime: req.body.prezime, 
+                index: req.body.index,
+                grupa: req.body.grupa
+            }));*/
+
+            
+
+            Promise.all(studentiListaPromisea).then(function(p){
+               
+                var stud=p.filter(function(a){return a.index===req.params.index})[0];
+
+                
+
+             //   grp = stud.getGrupe();
+                
+               /* JSON.stringify(
+                    { 
+                        status: "Kreiran student!"
+                    }
+                 )*/
+        
+               // res.send(p)
+              // res.send({status:"Kreiran student!"})
+              
+
+
+               grupeListaPromisea.push(
+
+                db.grupa.findOne({where: {naziv: req.body.grupa}}).then(function(t){
+                 //   alert(req.body.grupa)
+                    if(t!=null){
+                        console.log(req.body.grupa)
+                        //res.send("Ima");
+                        t.setStudenti([stud]);
+                     //   t.removeStudenti([stud]);
+                        return new Promise(function(resolve,reject){resolve(t);});
+                        //res.send({status:"Grupa sa nazivom {"+req.body.grupa+"} već postoji!"})
+                    }
+                    else {
+                      //  grp = stud.getGrupe();
+                    //    console.log(grp)
+                    console.log("aa")
+                        db.grupa.create({naziv:req.body.grupa}).then(function(k){
+                            k.setStudenti([stud]);
+                     //  k.removeStudenti();
+                            return new Promise(function(resolve,reject){resolve(k);});
+                        })
+
+                    }
+                })
+            );
+               
+
+
+              /* grupeListaPromisea.push(
+
+                db.grupa.create({naziv:req.body.grupa}).then(function(k){
+                    k.setStudenti([stud]);
+                    return new Promise(function(resolve,reject){resolve(k);});
+                })
+            );*/
+         //   Promise.all(grupeListaPromisea);  - da li je potrebno?
+           //  res.send({status: "Kreiran student!"});
+        
+            }).catch(function(err){
+                console.log(err)
+                res.send("Greska")
+            })
+        }
     }).catch(function(err){
         console.log(err)
-        res.send("Greska")
+        res.send("Greska");
     })
-})
+    
+
+   /* 
+    return new Promise(function(resolve,reject){
 
 
 
-                    node index.js
+    db.student.findOne({where: {index: req.body.index}}).then(function(p){
+       
+        if(p==null){
+         
+            res.send({status:"Student sa indexom {"+req.body.index+"} ne postoji!"})
+            return;
+           
+        }
 
+        else {    
 
+            db.grupa.findOne({where: {naziv: req.body.grupa}}).then(function(k){
+                if(k!=null){
+              
+                    //res.send("Ima");
+                    res.send({status:"Grupa sa nazivom {"+req.body.grupa+"} već postoji!"})
+
+                    //var stud=p.filter(function(a){return a.index===req.body.index})[0];
+
+                    console.log(k.naziv);
+                    
+                }
+                else {
+
+               
+                }
+            }).catch(function(err){
+                console.log(err)
+                res.send("Greska");
+            })
+        }
+
+    });
 
 */
+    
+
+    /*Promise.all(autoriListaPromisea).then(function(autori){
+        var andric=autori.filter(function(a){return a.ime==='Ivo Andric'})[0];
+        var dizdar=autori.filter(function(a){return a.ime==='Mak Dizdar'})[0];
+
+        knjigeListaPromisea.push(
+            db.knjiga.create({naziv:'Prokleta avlija',broj:10}).then(function(k){
+                k.setAutori([andric]);
+                return new Promise(function(resolve,reject){resolve(k);});
+            })
+        );
+    
+    })
+
+    }) */
+});
 
 
+
+  
+    
+
+
+app.get('/izmjenaGrupa.html', (req, res) => {
+
+    res.sendFile(__dirname + '/public/html/izmjenaGrupa.html');
+    
+  
+  
+});
+
+/*app.get('/student/:index', (req, res) => {
+
+    db.student.findOne({where: {index: req.params.index}}).then(function(p){//console.log(p.grupa)
+        if(p!=null){
+            //res.send("Ima");
+            res.send(p.grupa);} else res.send("nema");
+        }).catch(function(err){
+            res.send(err)
+        })
+    
+  
+  
+});*/
+
+
+         
+
+
+
+/*db.grupa.update({
+        naziv: req.body.naziv, predmet: req.body.predmet
+    }, {where: {id: req.params.id}}).then(function(p){
+        res.send("Uredjeno")
+    }).catch(function(err){
+        res.send("Greska")
+    })*/
+
+//           node index.js
+
+/*
+    
+app.get('/student/:index', (req, res) => {
+
+    
+  
+});*/
+
+/*
+function inicializacija(){
+    var autor1,autor2;
+    var studentiListaPromisea=[];
+    var grupeListaPromisea=[];
+    var bibliotekeListaPromisea=[];
+    return new Promise(function(resolve,reject){
+        studentiListaPromisea.push(db.student.create({
+            ime: "Hasan",
+            prezime: "Haskovic", 
+            index: "17717"
+        }));
+        studentiListaPromisea.push(db.student.create({
+            ime: "Neko",
+            prezime: "Nekic", 
+            index: "10000"
+        }));
+    Promise.all(autoriListaPromisea).then(function(autori){
+        var andric=autori.filter(function(a){return a.ime==='Ivo Andric'})[0];
+        var dizdar=autori.filter(function(a){return a.ime==='Mak Dizdar'})[0];
+
+        knjigeListaPromisea.push(
+            db.knjiga.create({naziv:'Prokleta avlija',broj:10}).then(function(k){
+                k.setAutori([andric]);
+                return new Promise(function(resolve,reject){resolve(k);});
+            })
+        );
+        knjigeListaPromisea.push(
+            db.knjiga.create({naziv:'Travnicka hronika',broj:4}).then(function(k){
+                k.setAutori([andric]);
+                return new Promise(function(resolve,reject){resolve(k);});
+            })
+        );
+        knjigeListaPromisea.push(
+            db.knjiga.create({naziv:'Kameni spavac',broj:6}).then(function(k){
+                k.setAutori([dizdar]);
+                return new Promise(function(resolve,reject){resolve(k);});
+            })
+        );
+        knjigeListaPromisea.push(
+            db.knjiga.create({naziv:'Zajednicka knjiga',broj:0}).then(function(k){
+                k.setAutori([andric,dizdar]);
+                return new Promise(function(resolve,reject){resolve(k);});
+            })
+        );
+        Promise.all(knjigeListaPromisea).then(function(knjige){
+     /      var pavlija=knjige.filter(function(k){return k.naziv==='Prokleta avlija'})[0];
+            var thronika=knjige.filter(function(k){return k.naziv==='Travnicka hronika'})[0];
+            var kspavac=knjige.filter(function(k){return k.naziv==='Kameni spavac'})[0];
+            var zknjiga=knjige.filter(function(k){return k.naziv==='Zajednicka knjiga'})[0];
+            bibliotekeListaPromisea.push(
+                db.biblioteka.create({adresa:'Titova 1'}).then(function(b){
+                    return b.setKnjigeBiblioteke([pavlija,thronika]).then(function(){
+                    return new Promise(function(resolve,reject){resolve(b);});
+                    });
+                })
+            );
+            bibliotekeListaPromisea.push(
+                db.biblioteka.create({adresa:'Zmaja od Bosne bb'}).then(function(b){
+                    return b.setKnjigeBiblioteke([kspavac,zknjiga]).then(function(){
+                    return new Promise(function(resolve,reject){resolve(b);});
+                    });
+                })
+            );
+            Promise.all(bibliotekeListaPromisea).then(function(b){resolve(b);}).catch(function(err){console.log("Biblioteke greska "+err);});
+              }).catch(function(err){console.log("Knjige greska "+err);});
+    }).catch(function(err){console.log("Autori greska "+err);});   
+    });
+}
+
+
+     */
 
 app.listen(3000);
+

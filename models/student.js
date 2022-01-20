@@ -13,8 +13,8 @@ const Student = sequelize.define('student', {
     prezime:{
         type:Sequelize.STRING
     },
-    indeks:{
-        type:Sequelize.INTEGER
+    index:{
+        type:Sequelize.STRING
     }
 })
 

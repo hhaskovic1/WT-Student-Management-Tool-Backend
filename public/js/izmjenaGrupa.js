@@ -1,15 +1,18 @@
 window.onload=function(){
-    var student = { 
+
+    
+
+   /* var student = { 
         ime : "", 
         prezime : "",
         index : 0,
         grupa : 0
     };
 
-    var student = new Object();
+    var student = new Object();*/
 
-      var ime = document.getElementById('ime');
-      var prezime = document.getElementById('prezime');
+    //  var ime = document.getElementById('ime');
+    //  var prezime = document.getElementById('prezime');
       var index = document.getElementById('index');
       var grupa = document.getElementById('grupa');
       var button = document.getElementById('prvi');
@@ -18,21 +21,24 @@ window.onload=function(){
     
 
       form.onsubmit = submit;
+
       function submit(event) {
    
-        
-          student.ime=ime.value;
+       // alert(index.value +" " +grupa.value);
+       
+    
+
+       /*   student.ime=ime.value;
           student.prezime=prezime.value;
           student.index=index.value;
-          student.grupa=grupa.value;
+          student.grupa=grupa.value;*/
           
         //  button.addEventListener("click",function(){novi.dodajStudenta(student,novi.myFunction);})
          // novi.dodajStudenta(student,novi.myFunction);
 
-         button.onclick = novi.dodajStudenta(student,function(error,data){
+         button.onclick = novi.postaviGrupu(index.value,grupa.value,function(error,data){
             document.getElementById("ajaxstatus").innerHTML=data.responseText;
-        //    alert(data.responseText)
-       //   return data;
+   
         }); 
 
      
