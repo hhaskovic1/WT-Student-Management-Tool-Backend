@@ -1,6 +1,6 @@
 window.onload=function(){
 
-    
+ // document.getElementById("ajaxstatus").innerHTML="AAAAAA"
 
    /* var student = { 
         ime : "", 

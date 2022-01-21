@@ -27,6 +27,9 @@ app.use(express.static("public"));
 app.use(express.static("models"));
 
 app.use(bodyParser.json());
+
+app.use(bodyParser.text());
+
 app.use(bodyParser.urlencoded({ extended: true }));
 
 
@@ -804,7 +807,7 @@ app.put('/student/:index', function(req, res){
 
             
 
-            
+            res.send({status:"Promjenjena grupa studentu {"+req.params.index+"}"});
                
 
 
@@ -900,6 +903,16 @@ app.get('/izmjenaGrupa.html', (req, res) => {
   
   
 });
+
+app.get('/unosStudenataBatch.html', (req, res) => {
+
+    res.sendFile(__dirname + '/public/html/unosStudenataBatch.html');
+    
+  
+  
+});
+
+
 
 /*app.get('/student/:index', (req, res) => {
 
@@ -1010,6 +1023,176 @@ function inicializacija(){
 
 
      */
+
+
+
+
+app.post('/batch/student', function(req, res){
+   
+   // console.log(req.body);
+
+   //var csv = req.bodyParser();
+
+   var brojac=0;
+
+      var niz = [];
+
+      let csv = req.body.csvStudenti;
+
+      
+      //console.log(csv);
+
+
+
+
+     var arr = csv.split(/\r\n/g);
+     
+
+    // console.log(arr);
+
+     for(var i=0; i<arr.length; i++) {
+     // alert(arr[i])
+      var s = { 
+         ime : "", 
+         prezime : "",
+         index : "",
+         grupa : ""
+     };
+
+
+      for(var j=0; j<arr[i].length; j++) {
+         if(arr[i][j]==','){
+
+      
+            brojac++;
+         }
+
+         else if(brojac==0){
+           
+
+
+            s.ime+= arr[i][j];
+         }
+
+         else if(brojac==1){
+            
+            s.prezime+=arr[i][j];
+         }
+         else if(brojac==2){
+            
+            s.index+=arr[i][j];
+         }
+         else if(brojac==3){
+            
+            s.grupa+=arr[i][j];
+
+         
+         }
+
+     
+
+      }
+
+      if(s.ime!="") { 
+         niz.push(s);
+       
+      }
+        
+      brojac=0;
+     
+
+     }
+
+
+
+   //  console.log(niz);
+
+
+
+     for(var u=0; u<niz.length; u++) {
+
+        var x = niz[u];
+            console.log(x);
+
+        db.student.findOne({where: {index: niz[u].index}}).then(function(p){//console.log(p)
+           
+           
+            console.log("x");
+
+
+            if(p!=null){
+                //res.send("Ima");
+                //res.send({status:"Student sa indexom {"+niz[u].index+"} već postoji!"})
+            }
+            else {
+                studentiListaPromisea.push( db.student.create({
+                    ime: x.ime, 
+                    prezime: x.prezime, 
+                    index: x.index,
+                    grupa: x.grupa
+                }));
+                Promise.all(studentiListaPromisea).then(function(p){
+                    
+                    var stud=p.filter(function(a){return a.index===x.index})[0];
+                   /* JSON.stringify(
+                        { 
+                            status: "Kreiran student!"
+                        }
+                     )*/
+            
+                   // res.send(p)
+              //     res.send({status:"Kreiran student!"})
+    
+    
+                   grupeListaPromisea.push(
+    
+                    db.grupa.findOne({where: {naziv: x.grupa}}).then(function(p){
+                     //   alert(req.body.grupa)
+                        if(p!=null){
+                            //res.send("Ima");
+                            return new Promise(function(resolve,reject){resolve(p);});
+                            //res.send({status:"Grupa sa nazivom {"+req.body.grupa+"} već postoji!"})
+                        }
+                        else {
+                            db.grupa.create({naziv:x.grupa}).then(function(k){
+                                k.setStudenti([stud]);
+                                return new Promise(function(resolve,reject){resolve(k);});
+                            })
+                        }
+                    })
+                );
+    
+                
+               
+             /*   grp = stud.getGrupe();
+                console.log(grp)*/
+    
+    
+                  /* grupeListaPromisea.push(
+    
+                    db.grupa.create({naziv:req.body.grupa}).then(function(k){
+                        k.setStudenti([stud]);
+                        return new Promise(function(resolve,reject){resolve(k);});
+                    })
+                );*/
+             //   Promise.all(grupeListaPromisea);  - da li je potrebno?
+               //  res.send({status: "Kreiran student!"});
+            
+                }).catch(function(err){
+                    console.log(err)
+                    //res.send("Greska")
+                })
+            }
+        }).catch(function(err){
+            console.log(err)
+           // res.send("Greska");
+        })
+    
+     }
+     
+
+});
+
 
 app.listen(3000);
 

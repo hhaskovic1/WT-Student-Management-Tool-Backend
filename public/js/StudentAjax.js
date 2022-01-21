@@ -165,8 +165,8 @@ let novi = (function() {
 
      var postaviGrupu = function(index,grupa,callbackFja) {
 
-
-
+     // document.getElementById("ajaxstatus").innerHTML="AAAAAA"
+     //  document.getElementById("ajaxstatus").innerHTML="AAAAAA"
 
 
       /*var ajax = new XMLHttpRequest();
@@ -211,12 +211,22 @@ ajax.open("PUT", "http://localhost:3000/student/"+index, true);
 /*var url = "http://localhost:3000/student:"+index;
       alert(url);*/
 
+     // document.getElementById("ajaxstatus").innerHTML="AAAAAA"
+
 ajax.setRequestHeader('Content-type','application/json; charset=utf-8');
-ajax.onload = function () {
+ajax.onreadystatechange = function () {
+  // document.getElementById("ajaxstatus").innerHTML="BB"
+   //document.getElementById("ajaxstatus").innerHTML="AAAAAA"
    //alert(json);
    // var users = JSON.parse(ajax.responseText);
-    if (xhr.readyState == 4 && xhr.status == "200") {
+    if (ajax.readyState == 4 && ajax.status == "200") {
+
+     // document.getElementById("ajaxstatus").innerHTML="AAAAAA"
       callbackFja(null,this);
+
+     // let odgovori = JSON.parse(ajax.responseText)
+      document.getElementById("ajaxstatus").innerHTML = ajax.responseText;
+
     } else {
       callbackFja("Greska ima",null);
     }
@@ -232,7 +242,115 @@ ajax.send(
 )
       
      }
-    
+
+
+     var dodajBatch = function(csvStudenti,callbackFja) {
+
+   //   alert(csvStudenti)
+
+      var ajax = new XMLHttpRequest();
+  
+        ajax.onreadystatechange = function() {
+           if (this.readyState == 4 && this.status == 200) {
+
+           
+              callbackFja(null,this);
+
+           }
+           if (ajax.readyState == 4 && ajax.status == 404)
+             //   console.log('Greska ima');
+                callbackFja("Greska ima",null);
+        };
+   
+        ajax.open("POST", "http://localhost:3000/batch/student", true);
+        ajax.setRequestHeader('Content-type', "application/json");
+        ajax.send(
+           JSON.stringify(
+              
+            {csvStudenti}   
+              
+           )
+        )
+      
+      /*
+      var brojac=0;
+
+      let niz = [];
+
+      
+
+     var arr = csvStudenti.split(/\r\n/g);
+     
+
+     for(var i=0; i<arr.length; i++) {
+     // alert(arr[i])
+      var s = { 
+         ime : "", 
+         prezime : "",
+         index : "",
+         grupa : ""
+     };
+
+
+      for(var j=0; j<arr[i].length; j++) {
+         if(arr[i][j]==','){
+
+      
+            brojac++;
+         }
+
+         else if(brojac==0){
+           
+
+
+            s.ime+= arr[i][j];
+         }
+
+         else if(brojac==1){
+            
+            s.prezime+=arr[i][j];
+         }
+         else if(brojac==2){
+            
+            s.index+=arr[i][j];
+         }
+         else if(brojac==3){
+            
+            s.grupa+=arr[i][j];
+
+         
+         }
+
+     
+
+      }
+
+      if(s.ime!="") { 
+         niz.push(s);
+       
+      }
+        
+      brojac=0;
+     
+
+     }
+
+     for(var p=0;p<niz.length;p++){
+
+      dodajStudenta(niz[p],function(error,data){
+         document.getElementById("ajaxstatus").innerHTML=data.responseText;
+  
+     }); 
+
+     }
+*/
+     
+     }
+
+     
+
+
+     
 
      var myFunction = function(error,data) {
       // document.getElementById("okvir").innerHTML = ajax.responseText;
@@ -245,7 +363,8 @@ ajax.send(
    return {
     dodajStudenta: dodajStudenta,
     postaviGrupu: postaviGrupu,
-    myFunction:myFunction
+    dodajBatch: dodajBatch,
+    myFunction: myFunction
   }
 }());
 
