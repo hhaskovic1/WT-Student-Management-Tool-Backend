@@ -10,7 +10,7 @@ const path = require("path");
 const db = require('./db.js');
 const { student, grupa } = require('./db.js');
 
-db.sequelize.sync({force:true})
+db.sequelize.sync()
 /*db.sequelize.sync({force:true}).then(function(){
     inicializacija().then(function(){
         console.log("Gotovo kreiranje tabela i ubacivanje pocetnih podataka!");
