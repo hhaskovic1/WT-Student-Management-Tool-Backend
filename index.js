@@ -494,7 +494,7 @@ db.sequelize.queryInterface.removeConstraint(
     });*/
 
     for(let i=0; i<req.body.brojVjezbi;i++){
-        
+        //treba dodati promise???????
 
         db.vjezba.create({brojZadataka:req.body.brojZadataka[i]}).then(function(k){
          //   console.log(req.body.brojZadataka[i]);
@@ -626,12 +626,13 @@ app.post('/student', function(req, res){
                  //   alert(req.body.grupa)
                     if(p!=null){
                         //res.send("Ima");
-                        return new Promise(function(resolve,reject){resolve(p);});
+                        p.addStudenti([stud]);
+                   //     return new Promise(function(resolve,reject){resolve(p);});
                         //res.send({status:"Grupa sa nazivom {"+req.body.grupa+"} već postoji!"})
                     }
                     else {
                         db.grupa.create({naziv:req.body.grupa}).then(function(k){
-                            k.setStudenti([stud]);
+                            k.addStudenti([stud]);
                             return new Promise(function(resolve,reject){resolve(k);});
                         })
                     }
@@ -1183,21 +1184,18 @@ app.post('/batch/student', function(req, res){
 
         }
 
-        }
+        
+    
+    
+    
+    }
         
         
-
-        
-
-    }).catch(function(err){
-        console.log(err)
-        //res.send("Greska")
-    })
     grupeListaPromisea.push(
     
                
 
-        db.grupa.findAll().then(function(resSet){
+        db.grupa.findAll().then(function(resSet2){
 
 
             for(var g=0; g<niz.length; g++) {
@@ -1205,7 +1203,7 @@ app.post('/batch/student', function(req, res){
                 var oj = niz[g];
          
         //    console.log("aaaa");
-            resSet.forEach(grup => {
+        resSet2.forEach(grup => {
    
         
         
@@ -1235,14 +1233,46 @@ app.post('/batch/student', function(req, res){
 
             else {
                 db.grupa.create({naziv:oj.grupa}).then(function(k){
+
+                    db.student.findAll().then(function(res){
+                    
+                    res.forEach(stu => {
+           
+                
+                        for(var h=0; h<niz.length; h++) {
+                            if(niz[h].index==stu.index){
+                               // console.log(niz[h].grupa);
+                               //console.log(k.naziv);
+                               if(niz[h].grupa==k.naziv){
+                                k.addStudenti([stu]);
+                               }
+                            }
+                        }
+
+                        //console.log(stu.index);
+                      //  k.addStudenti([stud]);
+                            
+                     
+                    })
+                })
               //      k.setStudenti([stud]);
       //        k.setStudenti([oj]);
+
+                
+
                     return new Promise(function(resolve,reject){resolve(k);});
                 }).catch(function(err){
                     console.log(err)
                     //res.send("Greska")
                 })
+
+                
+
                 gr.push(oj.grupa)
+
+
+
+
             }
 
         }
@@ -1263,6 +1293,15 @@ app.post('/batch/student', function(req, res){
             //res.send("Greska")
         })
     )
+        
+
+    }).catch(function(err){
+        console.log(err)
+        //res.send("Greska")
+    })
+    
+    
+    
 
      /*db.zadatak.findAll().then(function(r){
             brojac=0;
@@ -1346,7 +1385,29 @@ app.post('/batch/student', function(req, res){
         })
     
      }*/
-     
+
+
+
+                    
+                    
+     /*db.grupa.findAll().then(function(resSet){
+
+        resSet.forEach(grup => {
+
+            console.log(grup.naziv)
+
+        })
+
+            
+
+        db.student.findAll().then(function(resSet2){
+
+        
+            //for(var g=0; g<niz.length; g++) {
+
+        })
+
+    })*/
 
 });
 
