@@ -759,7 +759,7 @@ app.put('/student/:index', function(req, res){
                         resSet.forEach(knjiga => {
                             //console.log("\t"+knjiga.naziv);
                             if(knjiga.naziv!=req.body.grupa){
-                                knjiga.removeStudenti([stud]);
+                                //knjiga.removeStudenti([stud]);
                             }
                         });
                     });
@@ -777,17 +777,18 @@ app.put('/student/:index', function(req, res){
               // res.send({status:"Kreiran student!"})
               
               
-
+            //  console.log(req.body.grupa)
                grupeListaPromisea.push(
 
                 db.grupa.findOne({where: {naziv: req.body.grupa}}).then(function(t){
                  //   alert(req.body.grupa)
                     if(t!=null){
-                        console.log(req.body.grupa)
+                    //    console.log(req.body.grupa)
                         //res.send("Ima");
-                        t.setStudenti([stud]);
+                  //      t.addStudenti([stud]);
+                        stud.setGrupe(t);
                      //   t.removeStudenti([stud]);
-                        return new Promise(function(resolve,reject){resolve(t);});
+                        ///return new Promise(function(resolve,reject){resolve(t);});
                         //res.send({status:"Grupa sa nazivom {"+req.body.grupa+"} već postoji!"})
                     }
                     else {
@@ -796,12 +797,16 @@ app.put('/student/:index', function(req, res){
                   //  console.log("aa")
                  
                         db.grupa.create({naziv:req.body.grupa}).then(function(k){
-                            k.setStudenti([stud]);
+                   //         k.addStudenti([stud]);
+                            stud.setGrupe(k);
                      //  k.removeStudenti();
                             return new Promise(function(resolve,reject){resolve(k);});
                         })
 
                     }
+                }).catch(function(err){
+                   // console.log(err)
+                    res.send("Greska")
                 })
             );
 
