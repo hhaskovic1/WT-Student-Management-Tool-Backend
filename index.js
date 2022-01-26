@@ -1027,13 +1027,15 @@ function inicializacija(){
 
 
 
-
 app.post('/batch/student', function(req, res){
+
+    
    
    // console.log(req.body);
 
    //var csv = req.bodyParser();
 
+   var brojac2=0;
    var brojac=0;
 
       var niz = [];
@@ -1112,7 +1114,11 @@ app.post('/batch/student', function(req, res){
 
      var indeksi = [];
 
+     var op = [];
+
      var gr = [];
+
+     let string = "{";
 
      db.student.findAll().then(function(resSet){
 
@@ -1135,7 +1141,9 @@ app.post('/batch/student', function(req, res){
             })
 
             if(indeksi.includes(niz[u].index)) {
-               // console.log("ima");
+             //   console.log(niz[u].index + "IMA");
+                string+=niz[u].index+","
+                ima = true;
                 //res.send("Ima");
             }
 
@@ -1146,6 +1154,9 @@ app.post('/batch/student', function(req, res){
                     index: niz[u].index,
                     grupa: niz[u].grupa
                 }));
+
+                brojac2++;
+
 
                // var x=niz[u];
                 
@@ -1189,10 +1200,10 @@ app.post('/batch/student', function(req, res){
     
     
     }
-        
-        
-    grupeListaPromisea.push(
-    
+    Promise.all(studentiListaPromisea).then((kreiraniZadaci)=>{  
+        //console.log(kreiraniZadaci)
+     
+       
                
 
         db.grupa.findAll().then(function(resSet2){
@@ -1222,10 +1233,18 @@ app.post('/batch/student', function(req, res){
                     })
                 }*/
                     
-             
+              
             })
           //  console.log(oj.grupa);
+
+           
+
             if(gr.includes(oj.grupa)) {
+
+            //    console.log(oj.grupa + " " + oj.index);
+            //if(!indeksi.includes(oj.index))console.log(oj.index+" "+oj.grupa);
+                
+                
                 
                 //res.send("Ima");
                  //return new Promise(function(resolve,reject){resolve(gr);});
@@ -1234,17 +1253,33 @@ app.post('/batch/student', function(req, res){
             else {
                 db.grupa.create({naziv:oj.grupa}).then(function(k){
 
+                    grupeListaPromisea.push(k)
+
+                  
+
                     db.student.findAll().then(function(res){
                     
                     res.forEach(stu => {
            
-                
+                // Promise.all(nekiNiz.map((ClanNiza) => {//ovo se izvrsi za svaki clan niza })).then((results) =>
+
                         for(var h=0; h<niz.length; h++) {
                             if(niz[h].index==stu.index){
+
+                                
+                              
+                         //   console.log(op[0]);
+                        /* for(var t=0; t<op.length; t++) {
+                            console.log(op[t]);
+                           
+                         }*/
+                            
+                             //   if(indeksi.includes(niz[h].index))console.log(niz[h].index);
                                // console.log(niz[h].grupa);
                                //console.log(k.naziv);
-                               if(niz[h].grupa==k.naziv){
+                               if(niz[h].grupa==k.naziv && !op.includes(niz[h].index)){ console.log(niz[h].index);
                                 k.addStudenti([stu]);
+                                op.push(niz[h].index)
                                }
                             }
                         }
@@ -1267,7 +1302,7 @@ app.post('/batch/student', function(req, res){
                 })
 
                 
-
+             //   op.push(oj.index)
                 gr.push(oj.grupa)
 
 
@@ -1292,7 +1327,31 @@ app.post('/batch/student', function(req, res){
             console.log(err)
             //res.send("Greska")
         })
-    )
+
+
+       // console.log(brojac2);
+        
+        if(!ima)res.send({status:"Dodano {" + brojac2 +"} studenata!"})
+        else {
+            let str="";
+            for(var z=0; z<string.length-1; z++) {
+                str+=string[z]
+            }
+        //    console.log(str)
+           // let str = string[string.length-1];
+           // string = string[string.length-1];
+     //      str+="}";
+     //string[string.length-1]="}"
+     //console.log(string[string.length-1])
+     str+="}"
+    
+
+            res.send({status:"Dodano {" + brojac2 +"} studenata, a studenti " +  str + " već postoje!!"})
+        }
+    
+    })
+        //prrrrr
+    
         
 
     }).catch(function(err){
@@ -1300,7 +1359,7 @@ app.post('/batch/student', function(req, res){
         //res.send("Greska")
     })
     
-    
+   // console.log(grupeListaPromisea)
     
 
      /*db.zadatak.findAll().then(function(r){
@@ -1408,6 +1467,7 @@ app.post('/batch/student', function(req, res){
         })
 
     })*/
+    
 
 });
 
